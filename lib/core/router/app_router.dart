@@ -1,9 +1,22 @@
 // import 'package:fic12_flutter_starter/presentation/home/pages/dashboard_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_onlineshop_app/presentation/address/pages/add_address_page.dart';
+import 'package:flutter_onlineshop_app/presentation/auth/pages/login_page.dart';
+import 'package:flutter_onlineshop_app/presentation/auth/pages/register_page.dart';
 import 'package:flutter_onlineshop_app/presentation/home/pages/dashboard_page.dart';
+import 'package:flutter_onlineshop_app/presentation/orders/pages/cart_page.dart';
+import 'package:flutter_onlineshop_app/presentation/orders/pages/order_detail_page.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../presentation/address/models/address_model.dart';
+import '../../presentation/address/pages/address_page.dart';
+import '../../presentation/address/pages/edit_address_page.dart';
 import '../../presentation/intro/splash_page.dart';
+import '../../presentation/orders/pages/history_order_page.dart';
+import '../../presentation/orders/pages/payment_detail_page.dart';
+import '../../presentation/orders/pages/payment_waiting_page.dart';
+import '../../presentation/orders/pages/shipping_detail_page.dart';
+import '../../presentation/orders/pages/tracking_order_page.dart';
 
 part 'enums/root_tab.dart';
 part 'models/path_parameters.dart';
@@ -35,23 +48,23 @@ class AppRouter {
         path: RouteConstants.splashPath,
         builder: (context, state) => const SplashPage(),
       ),
-      // GoRoute(
-      //   name: RouteConstants.login,
-      //   path: RouteConstants.loginPath,
-      //   builder: (context, state) => const LoginPage(),
-      //   routes: [
-      //     GoRoute(
-      //       name: RouteConstants.verification,
-      //       path: RouteConstants.verificationPath,
-      //       builder: (context, state) => const VerificationPage(),
-      //     ),
-      //     GoRoute(
-      //       name: RouteConstants.register,
-      //       path: RouteConstants.registerPath,
-      //       builder: (context, state) => const RegisterPage(),
-      //     ),
-      //   ],
-      // ),
+      GoRoute(
+        name: RouteConstants.login,
+        path: RouteConstants.loginPath,
+        builder: (context, state) => const LoginPage(),
+        routes: [
+          // GoRoute(
+          //   name: RouteConstants.verification,
+          //   path: RouteConstants.verificationPath,
+          //   builder: (context, state) => const VerificationPage(),
+          // ),
+          GoRoute(
+            name: RouteConstants.register,
+            path: RouteConstants.registerPath,
+            builder: (context, state) => const RegisterPage(),
+          ),
+        ],
+      ),
       GoRoute(
         name: RouteConstants.root,
         path: RouteConstants.rootPath,
@@ -62,6 +75,109 @@ class AppRouter {
             currentTab: tab,
           );
         },
+        routes: [
+          GoRoute(
+            name: RouteConstants.orderList,
+            path: RouteConstants.orderListPath,
+            builder: (context, state) => const HistoryOrderPage(),
+          ),
+          GoRoute(
+            name: RouteConstants.cart,
+            path: RouteConstants.cartPath,
+            builder: (context, state) => const CartPage(),
+            routes: [
+              GoRoute(
+                name: RouteConstants.orderDetail,
+                path: RouteConstants.orderDetailPath,
+                builder: (context, state) {
+                  final args = state.extra as String;
+                  return OrderDetailPage(
+                    destination: args,
+                  );
+                },
+                routes: [
+                  GoRoute(
+                    name: RouteConstants.paymentDetail,
+                    path: RouteConstants.paymentDetailPath,
+                    builder: (context, state) => const PaymentDetailPage(),
+                    routes: [
+                      GoRoute(
+                        name: RouteConstants.paymentWaiting,
+                        path: RouteConstants.paymentWaitingPath,
+                        builder: (context, state) {
+                          final args = state.extra as int;
+                          return PaymentWaitingPage(orderId: args);
+                        },
+                      ),
+                      GoRoute(
+                        name: RouteConstants.trackingOrder,
+                        path: RouteConstants.trackingOrderPath,
+                        builder: (context, state) {
+                          final args = state.extra as int;
+                          return TrackingOrderPage(orderId: args);
+                        },
+                        routes: [
+                          GoRoute(
+                              name: RouteConstants.shippingDetail,
+                              path: RouteConstants.shippingDetailPath,
+                              builder: (context, state) {
+                                final args = state.extra as Map<String, String>;
+                                return ShippingDetailPage(
+                                    resi: args['resi'] ?? '',
+                                    courier: args['courier'] ?? '');
+                              }),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+                //           routes: [
+                //             GoRoute(
+                //               name: RouteConstants.paymentDetail,
+                //               path: RouteConstants.paymentDetailPath,
+                //               builder: (context, state) => const PaymentDetailPage(),
+                //               routes: [
+                //                 GoRoute(
+                //                   name: RouteConstants.trackingOrder,
+                //                   path: RouteConstants.trackingOrderPath,
+                //                   builder: (context, state) =>
+                //                       const TrackingOrderPage(),
+                //                   routes: [
+                //                     GoRoute(
+                //                       name: RouteConstants.shippingDetail,
+                //                       path: RouteConstants.shippingDetailPath,
+                //                       builder: (context, state) =>
+                //                           const ShippingDetailPage(),
+                //                     ),
+                //                   ],
+                //                 ),
+                //               ],
+                //             ),
+                //           ],
+              ),
+            ],
+          ),
+          GoRoute(
+            name: RouteConstants.address,
+            path: RouteConstants.addressPath,
+            builder: (context, state) => const AddressPage(),
+            routes: [
+              GoRoute(
+                name: RouteConstants.addAddress,
+                path: RouteConstants.addAddressPath,
+                builder: (context, state) => const AddAddressPage(),
+              ),
+              GoRoute(
+                name: RouteConstants.editAddress,
+                path: RouteConstants.editAddressPath,
+                builder: (context, state) {
+                  final args = state.extra as AddressModel;
+                  return EditAddressPage(data: args);
+                },
+              ),
+            ],
+          ),
+        ],
       ),
       //   routes: [
       //     GoRoute(
@@ -72,11 +188,11 @@ class AppRouter {
       //         return ProductDetailPage(data: args);
       //       },
       //     ),
-      //     GoRoute(
-      //       name: RouteConstants.cart,
-      //       path: RouteConstants.cartPath,
-      //       builder: (context, state) => const CartPage(),
-      //     ),
+      // GoRoute(
+      //   name: RouteConstants.cart,
+      //   path: RouteConstants.cartPath,
+      //   builder: (context, state) => const CartPage(),
+      // ),
       //     GoRoute(
       //       name: RouteConstants.address,
       //       path: RouteConstants.addressPath,

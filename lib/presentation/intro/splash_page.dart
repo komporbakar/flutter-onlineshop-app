@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_onlineshop_app/core/constants/colors.dart';
 import 'package:flutter_onlineshop_app/core/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 
@@ -15,18 +14,12 @@ class SplashPage extends StatelessWidget {
         pathParameters: PathParameters().toMap(),
       ),
     );
-    return const Scaffold(
+    return Scaffold(
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.all(30.0),
-        child: Text(
-          'Code with Bahri',
-          style: TextStyle(
-            color: AppColors.black,
-            fontWeight: FontWeight.w200,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ),
+          padding: const EdgeInsets.all(30.0),
+          child: Center(
+            child: Image.asset('assets/images/splashscreen.png'),
+          )),
     );
   }
 }

@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_onlineshop_app/core/components/components.dart';
 import 'package:flutter_onlineshop_app/core/router/app_router.dart';
 import 'package:flutter_onlineshop_app/presentation/home/bloc/all_product/all_product_bloc.dart';
-import 'package:flutter_onlineshop_app/presentation/home/bloc/best_seller_product/best_seller_product_bloc.dart';
 import 'package:flutter_onlineshop_app/presentation/home/bloc/checkout/checkout_bloc.dart';
+import 'package:flutter_onlineshop_app/presentation/home/bloc/product_category/product_category_bloc.dart';
 import 'package:flutter_onlineshop_app/presentation/home/bloc/special_offer_products/special_offer_products_bloc.dart';
 import 'package:flutter_onlineshop_app/presentation/home/widgets/banner_slider.dart';
 import 'package:flutter_onlineshop_app/presentation/home/widgets/organism/menu_categories.dart';
@@ -218,11 +218,12 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     searchController = TextEditingController();
     context.read<AllProductBloc>().add(const AllProductEvent.getAllProducts());
-    context.read<BestSellerProductBloc>().add(
-          const BestSellerProductEvent.getBestSellerProducts(),
-        );
+
     context.read<SpecialOfferProductsBloc>().add(
           const SpecialOfferProductsEvent.getSpecialOfferProducts(),
+        );
+    context.read<ProductCategoryBloc>().add(
+          const ProductCategoryEvent.getProductByCategory(),
         );
     super.initState();
   }
@@ -237,12 +238,16 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Laravel Store'),
+        title: const Text('Hydro Store'),
         actions: [
+          IconButton(
+            onPressed: () {},
+            icon: Assets.icons.notification.svg(height: 24.0),
+          ),
           BlocBuilder<CheckoutBloc, CheckoutState>(
             builder: (context, state) {
               return state.maybeWhen(
-                loaded: (checkout) {
+                loaded: (checkout, _, __, ___, ____, _____, ______) {
                   final totalQuantity = checkout.fold<int>(
                       0,
                       (previousValue, element) =>
@@ -277,10 +282,7 @@ class _HomePageState extends State<HomePage> {
               );
             },
           ),
-          IconButton(
-            onPressed: () {},
-            icon: Assets.icons.notification.svg(height: 24.0),
-          ),
+          const SizedBox(width: 16.0),
         ],
       ),
       body: ListView(
@@ -312,7 +314,7 @@ class _HomePageState extends State<HomePage> {
               return state.maybeWhen(
                 loaded: (products) {
                   return ProductList(
-                    title: 'Featured Product',
+                    title: 'Best Sellers',
                     onSeeAllTap: () {},
                     items:
                         products.length > 2 ? products.sublist(0, 2) : products,
@@ -333,18 +335,18 @@ class _HomePageState extends State<HomePage> {
               // );
             },
           ),
-          const SpaceHeight(50.0),
-          BannerSlider(items: banners2),
+          // const SpaceHeight(50.0),
+          // BannerSlider(items: banners2),
           const SpaceHeight(28.0),
-          BlocBuilder<BestSellerProductBloc, BestSellerProductState>(
+          BlocBuilder<ProductCategoryBloc, ProductCategoryState>(
               builder: (context, state) {
             return state.maybeWhen(
               loaded: (products) {
                 return ProductList(
-                  title: 'Best Sellers',
+                  title: 'Seeds',
                   onSeeAllTap: () {},
                   items:
-                      products.length > 2 ? products.sublist(0, 2) : products,
+                      products.length > 4 ? products.sublist(0, 4) : products,
                 );
               },
               orElse: () => const SizedBox.shrink(),
@@ -379,10 +381,10 @@ class _HomePageState extends State<HomePage> {
               return state.maybeWhen(
                 loaded: (products) {
                   return ProductList(
-                    title: 'Special Offers',
+                    title: 'Growing Media',
                     onSeeAllTap: () {},
                     items:
-                        products.length > 2 ? products.sublist(0, 2) : products,
+                        products.length > 4 ? products.sublist(0, 4) : products,
                   );
                 },
                 orElse: () => const SizedBox.shrink(),
